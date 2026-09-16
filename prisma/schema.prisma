@@ -2,9 +2,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// SQLite para desarrollo sin fricción. En producción cambia provider a "postgresql".
+// Postgres (funciona en Vercel/serverless). Para dev usa Neon/Vercel Postgres o un
+// Postgres local; ambos con la misma DATABASE_URL. Ver docs/DEPLOY_VERCEL.md.
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

