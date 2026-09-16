@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #05070a;
+  --color-panel: #0a0e14;
+  --color-panel-2: #0d131b;
+  --color-line: #16202b;
+  --color-neon: #22ff88;
+  --color-neon-dim: #12b866;
+  --color-cyan: #35e0ff;
+  --color-magenta: #ff3bd4;
+  --color-amber: #ffb454;
+  --color-muted: #5b6b7a;
+  --color-text: #c8d6e0;
+
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--color-void);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 20% -10%, rgba(34, 255, 136, 0.06), transparent 45%),
+    radial-gradient(circle at 90% 10%, rgba(53, 224, 255, 0.05), transparent 40%);
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--color-neon);
+  color: #04120a;
+}
+
+.scanlines::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.25) 3px
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.35;
+}
+
+.neon-text {
+  color: var(--color-neon);
+  text-shadow: 0 0 8px rgba(34, 255, 136, 0.45);
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center;
+}
+
+@keyframes glitch {
+  0%, 92%, 100% { transform: translate(0); clip-path: inset(0 0 0 0); }
+  93% { transform: translate(-2px, 1px); clip-path: inset(20% 0 40% 0); }
+  95% { transform: translate(2px, -1px); clip-path: inset(60% 0 10% 0); }
+  97% { transform: translate(-1px, 0); clip-path: inset(10% 0 70% 0); }
+}
+
+.glitch {
+  position: relative;
+}
+
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--color-magenta);
+  opacity: 0.7;
+  animation: glitch 4.5s infinite steps(1);
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.caret {
+  display: inline-block;
+  width: 8px;
+  height: 1.05em;
+  background: var(--color-neon);
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+  box-shadow: 0 0 8px var(--color-neon);
+}
+
+.thin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 4px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}

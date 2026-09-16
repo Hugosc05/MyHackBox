@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// SQLite para desarrollo sin fricción. En producción cambia provider a "postgresql".
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  handle       String   @unique
+  email        String?  @unique
+  passwordHash String?
+  xp           Int      @default(0)
+  createdAt    DateTime @default(now())
+  progress     UserLabProgress[]
+  submissions  ChallengeSubmission[]
+}
+
+model UserLabProgress {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  labSlug          String
+  status           String    @default("IN_PROGRESS") // IN_PROGRESS | COMPLETED
+  currentStepIndex Int       @default(0)
+  completedAt      DateTime?
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([userId, labSlug])
+  @@index([userId, status])
+}
+
+model ChallengeSubmission {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  labSlug     String
+  isCorrect   Boolean  @default(false)
+  submittedAt DateTime @default(now())
+
+  @@index([userId, labSlug])
+}
