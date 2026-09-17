@@ -12,8 +12,8 @@ export async function GET() {
       prisma.userLabProgress.findMany({ where: { userId: user.id } }),
       prisma.challengeSubmission.findMany({ where: { userId: user.id, isCorrect: true } })
     ]);
-    prog.forEach((p) => (done[p.labSlug] = { status: p.status, step: p.currentStepIndex }));
-    subs.forEach((s) => (done[s.labSlug] = { status: "COMPLETED" }));
+    prog.forEach((p: { labSlug: string; status: string; currentStepIndex: number }) => (done[p.labSlug] = { status: p.status, step: p.currentStepIndex }));
+    subs.forEach((s: { labSlug: string }) => (done[s.labSlug] = { status: "COMPLETED" }));
   }
 
   return NextResponse.json({

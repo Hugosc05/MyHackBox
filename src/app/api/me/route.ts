@@ -14,6 +14,6 @@ export async function GET() {
   return NextResponse.json({
     user: { id: user.id, handle: user.handle, xp: user.xp, authed: Boolean(user.email) },
     guided: progress,
-    solved: [...new Set(subs.map((s) => s.labSlug))]
+    solved: [...new Set(subs.map((s: { labSlug: string }) => s.labSlug))]
   });
 }

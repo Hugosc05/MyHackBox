@@ -8,7 +8,7 @@ export async function GET() {
     take: 20,
     select: { id: true, handle: true, xp: true }
   });
-  const ids = users.map((u) => u.id);
+  const ids = users.map((u: { id: string; handle: string; xp: number }) => u.id);
 
   const [subs, prog] = await Promise.all([
     prisma.challengeSubmission.findMany({
@@ -26,11 +26,11 @@ export async function GET() {
     if (!solved.has(uid)) solved.set(uid, new Set());
     solved.get(uid)!.add(slug);
   };
-  subs.forEach((s) => add(s.userId, s.labSlug));
-  prog.forEach((p) => add(p.userId, p.labSlug));
+  subs.forEach((s: { userId: string; labSlug: string }) => add(s.userId, s.labSlug));
+  prog.forEach((p: { userId: string; labSlug: string }) => add(p.userId, p.labSlug));
 
   return NextResponse.json({
-    rows: users.map((u, i) => ({
+    rows: users.map((u: { id: string; handle: string; xp: number }, i: number) => ({
       rank: i + 1,
       handle: u.handle,
       xp: u.xp,
