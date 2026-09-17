@@ -20,29 +20,42 @@ Database* → **Postgres**. Vercel añadirá las variables `POSTGRES_*` y una `D
 Opción B — **Neon** (https://neon.tech): crea un proyecto y copia la *connection string*
 (algo como `postgresql://user:pass@ep-xxx.eu-central-1.aws.neon.tech/neondb?sslmode=require`).
 
+Opción C — **Supabase** (https://supabase.com): crea un proyecto y pulsa el botón **Connect**
+(arriba). En la sección **ORMs → Prisma** te da las dos URLs ya listas:
+- **Transaction pooler** (puerto `6543`) → para `DATABASE_URL` (añade `?pgbouncer=true`).
+- **Session pooler / Direct** (puerto `5432`) → para `DIRECT_URL`.
+Sustituye `[YOUR-PASSWORD]` por la contraseña de la base de datos que fijaste al crear el proyecto.
+
 ## 2. Variables de entorno en Vercel
 
 Proyecto → **Settings → Environment Variables**, y añade (para *Production* y *Preview*):
 
 | Nombre | Valor |
 |--------|-------|
-| `DATABASE_URL` | la connection string de Postgres del paso 1 |
+| `DATABASE_URL` | conexión con **pooler** (Supabase 6543 con `?pgbouncer=true`) |
+| `DIRECT_URL` | conexión **directa** (Supabase/Session 5432) |
 | `AUTH_SECRET` | un valor aleatorio: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
 
-Si usaste Vercel Postgres y te creó `DATABASE_URL` sola, solo tienes que añadir `AUTH_SECRET`.
+Con Neon o Vercel Postgres (sin pooler de transacción) puedes poner el **mismo valor** en
+`DATABASE_URL` y `DIRECT_URL`. Con Supabase, usa el 6543 para una y el 5432 para la otra.
 
 ## 3. Crea las tablas (una vez)
 
-El build **no** crea las tablas. Hazlo una vez desde tu equipo apuntando a la BD de producción:
+El build **no** crea las tablas. Hazlo una vez desde tu equipo. `prisma db push` usa
+`DIRECT_URL` (la directa, puerto 5432), así que define ambas. Lo más cómodo: crea un `.env`
+local (ya está en `.gitignore`) con `DATABASE_URL`, `DIRECT_URL` y `AUTH_SECRET`, y ejecuta:
 
 ```bash
-# en la raíz del proyecto, con la DATABASE_URL de producción
-export DATABASE_URL="postgresql://...(la de Neon/Vercel)"
 npm install
 npx prisma db push
 ```
 
-(En Windows PowerShell: `$env:DATABASE_URL="postgresql://..."` antes del `npx prisma db push`.)
+Alternativa sin `.env` (Windows PowerShell):
+```powershell
+$env:DATABASE_URL="postgresql://...:6543/postgres?pgbouncer=true"
+$env:DIRECT_URL="postgresql://...:5432/postgres"
+npx prisma db push
+```
 
 ## 4. Importa el repo en Vercel
 

@@ -2,11 +2,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Postgres (funciona en Vercel/serverless). Para dev usa Neon/Vercel Postgres o un
-// Postgres local; ambos con la misma DATABASE_URL. Ver docs/DEPLOY_VERCEL.md.
+// Postgres (funciona en Vercel/serverless). Ver docs/DEPLOY_VERCEL.md.
+// url       = conexión con POOLER (para el runtime serverless).
+// directUrl = conexión DIRECTA (la usa el CLI de Prisma: db push / migrate).
+// Sin pooler (Postgres local o Neon), pon el mismo valor en ambas.
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
